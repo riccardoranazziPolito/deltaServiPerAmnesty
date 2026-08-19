@@ -19,6 +19,9 @@ export async function GET() {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        rejectUnauthorized: false
+      }
     });
 
     // 1. Testa solo se la connessione e le credenziali sono accettate da Register
