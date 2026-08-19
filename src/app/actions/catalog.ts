@@ -174,7 +174,9 @@ export async function checkout(formData: FormData) {
       const user = await prisma.user.findUnique({ where: { id: session.userId } });
       const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
       
-      if (user && admin && user.email && admin.email) {
+      const adminEmail = process.env.ADMIN_EMAIL || admin?.email;
+
+      if (user && user.email && adminEmail) {
         const itemsList = cartItems.map(item => ({
           productName: item.product.name,
           uniqueCode: item.product.uniqueCode,
@@ -184,7 +186,7 @@ export async function checkout(formData: FormData) {
         sendOrderConfirmation(
           order.id, 
           user.email, 
-          admin.email, 
+          adminEmail, 
           shippingAddress, 
           itemsList
         ).catch(e => console.error("Email error:", e));
