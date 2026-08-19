@@ -53,7 +53,7 @@ Grazie per aver utilizzato il nostro sistema di gestione B2B!
 
   // 1. Invia email all'utente (Cliente)
   const userMailOptions = {
-    from: '"Delta Service Gestionale" <ordini@deltaservice.it>',
+    from: `"Delta Service Gestionale" <${process.env.SMTP_USER}>`,
     to: userEmail,
     subject: `Conferma Ordine #${orderId.slice(-6).toUpperCase()}`,
     text: `Ciao,\nEcco il riepilogo del tuo ordine:\n\n` + textContent,
@@ -63,7 +63,7 @@ Grazie per aver utilizzato il nostro sistema di gestione B2B!
   
   // 2. Invia email all'Amministratore
   const adminMailOptions = {
-    from: '"Delta Service Gestionale" <ordini@deltaservice.it>',
+    from: `"Delta Service Gestionale" <${process.env.SMTP_USER}>`,
     to: adminEmail,
     subject: `[NUOVO ORDINE] Ricevuto ordine #${orderId.slice(-6).toUpperCase()}`,
     text: `Un cliente ha appena effettuato un ordine.\nEmail cliente: ${userEmail}\n\n` + textContent,
