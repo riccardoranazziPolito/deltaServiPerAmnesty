@@ -34,7 +34,7 @@ export default async function AdminDashboard() {
         {/* Gestione Categorie */}
         <div className="glass-panel">
           <h3>Nuova Categoria</h3>
-          <form action={createCategory} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form action={async (formData) => { "use server"; await createCategory(formData); }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <input type="text" name="name" placeholder="Nome Categoria" className="input-field" required />
             <button type="submit" className="btn btn-primary">Aggiungi</button>
           </form>
@@ -48,7 +48,7 @@ export default async function AdminDashboard() {
         {/* Gestione Utenti */}
         <div className="glass-panel">
           <h3>Nuovo Utente (Cliente)</h3>
-          <form action={createUser} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form action={async (formData) => { "use server"; await createUser(formData); }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <input type="text" name="firstName" placeholder="Nome" className="input-field" required />
               <input type="text" name="lastName" placeholder="Cognome" className="input-field" required />
@@ -77,7 +77,7 @@ export default async function AdminDashboard() {
       {/* Gestione Prodotti */}
       <div className="glass-panel">
         <h3>Nuovo Prodotto</h3>
-        <form action={createProduct} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <form action={async (formData) => { "use server"; await createProduct(formData); }} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           <input type="text" name="uniqueCode" placeholder="Codice Univoco (SKU)" className="input-field" required />
           <input type="text" name="name" placeholder="Nome Prodotto" className="input-field" required />
           <select name="categoryId" className="input-field" required>
