@@ -39,7 +39,7 @@ export default async function AdminDashboard() {
             <button type="submit" className="btn btn-primary">Aggiungi</button>
           </form>
           <ul style={{ marginTop: '1rem', listStyle: 'none' }}>
-            {categories.map(c => (
+            {categories.map((c: any) => (
               <li key={c.id} style={{ padding: '0.5rem 0', borderBottom: '1px solid var(--border-color)' }}>{c.name}</li>
             ))}
           </ul>
@@ -61,7 +61,7 @@ export default async function AdminDashboard() {
             <button type="submit" className="btn btn-primary">Crea Utente</button>
           </form>
           <ul style={{ marginTop: '1rem', listStyle: 'none' }}>
-            {users.map(u => (
+            {users.map((u: any) => (
               <li key={u.id} style={{ padding: '0.5rem 0', borderBottom: '1px solid var(--border-color)' }}>
                 <strong>{u.firstName} {u.lastName}</strong> <br/>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
@@ -82,7 +82,7 @@ export default async function AdminDashboard() {
           <input type="text" name="name" placeholder="Nome Prodotto" className="input-field" required />
           <select name="categoryId" className="input-field" required>
             <option value="">Seleziona Categoria...</option>
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <input type="number" name="quantity" placeholder="Giacenza Iniziale" className="input-field" required />
           <input type="text" name="description" placeholder="Descrizione (opzionale)" className="input-field" style={{ gridColumn: 'span 2' }} />
@@ -104,7 +104,7 @@ export default async function AdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {products.map(p => (
+            {products.map((p: any) => (
               <tr key={p.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <td style={{ padding: '0.5rem' }}>{p.uniqueCode}</td>
                 <td style={{ padding: '0.5rem' }}>{p.name}</td>
@@ -136,7 +136,7 @@ export default async function AdminDashboard() {
           <p style={{ color: 'var(--text-secondary)', marginTop: '1rem' }}>Nessun ordine ricevuto finora.</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-            {orders.map(order => (
+            {orders.map((order: any) => (
               <div key={order.id} style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'rgba(0,0,0,0.2)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>
                   <strong>Ordine #{order.id.slice(-6).toUpperCase()}</strong>
@@ -154,7 +154,7 @@ export default async function AdminDashboard() {
                   <div>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.2rem' }}>Materiali Ordinati:</p>
                     <ul style={{ listStyle: 'none', fontSize: '0.9rem' }}>
-                      {order.items.map(item => (
+                      {order.items.map((item: any) => (
                         <li key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.2rem 0' }}>
                           <span>{item.product.name} (SKU: {item.product.uniqueCode})</span>
                           <strong>x{item.quantity}</strong>

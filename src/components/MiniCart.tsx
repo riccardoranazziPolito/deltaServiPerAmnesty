@@ -14,7 +14,7 @@ export default async function MiniCart() {
 
   if (cartItems.length === 0) return null; // Non mostrare se il carrello è vuoto
 
-  const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const totalQuantity = cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0);
 
   return (
     <div style={{
@@ -39,7 +39,7 @@ export default async function MiniCart() {
       </div>
       
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '150px', overflowY: 'auto' }}>
-        {cartItems.map(item => (
+        {cartItems.map((item: any) => (
           <li key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
             <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '160px' }}>
               {item.product.name}

@@ -19,7 +19,7 @@ export default async function CartPage() {
     orderBy: { createdAt: 'desc' }
   });
 
-  const total = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const total = cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0);
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -36,7 +36,7 @@ export default async function CartPage() {
         <>
           <div className="glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {cartItems.map(item => (
+              {cartItems.map((item: any) => (
                 <li key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid var(--border-color)' }}>
                   <div>
                     <h4 style={{ margin: '0 0 0.5rem 0' }}>{item.product.name}</h4>
@@ -66,7 +66,10 @@ export default async function CartPage() {
 
           <div className="glass-panel">
             <h3>Completa l'Ordine</h3>
-            <form action={checkout} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+            <form action={async (formData: FormData) => {
+              "use server";
+              await checkout(formData);
+            }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               
               <AddressForm recipients={recipients} />
 

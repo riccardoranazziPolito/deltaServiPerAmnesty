@@ -44,7 +44,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
         >
           Tutti
         </a>
-        {categories.map(c => (
+        {categories.map((c: any) => (
           <a 
             key={c.id}
             href={`/catalogo?category=${c.id}`} 
@@ -59,7 +59,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
       {/* Griglia Prodotti */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
         {products.length === 0 && <p>Nessun prodotto trovato.</p>}
-        {products.map(p => (
+        {products.map((p: any) => (
           <div key={p.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{p.uniqueCode} • {p.category.name}</span>
