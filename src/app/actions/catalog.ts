@@ -71,17 +71,53 @@ export async function checkout(formData: FormData) {
   const session = await getSession();
   if (!session) return { error: "Devi effettuare l'accesso" };
 
-  const address = formData.get("address") as string;
-  const civic = formData.get("civic") as string;
-  const zipCode = formData.get("zipCode") as string;
-  const city = formData.get("city") as string;
-  const province = formData.get("province") as string;
+  const savedRecipientId = formData.get("savedRecipientId") as string;
+  let shippingAddress = "";
 
-  if (!address || !civic || !zipCode || !city || !province) {
-    return { error: "Compila tutti i campi dell'indirizzo" };
+  if (savedRecipientId && savedRecipientId !== "new") {
+    const recipient = await prisma.recipient.findUnique({
+      where: { id: savedRecipientId }
+    });
+    if (!recipient || recipient.userId !== session.userId) {
+      return { error: "Destinatario non valido" };
+    }
+    shippingAddress = `Destinatario: ${recipient.firstName} ${recipient.lastName}\n`;
+    if (recipient.company) shippingAddress += `Azienda: ${recipient.company}\n`;
+    shippingAddress += `${recipient.address}, ${recipient.civic}\n${recipient.zipCode} ${recipient.city} (${recipient.province})`;
+  } else {
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const company = formData.get("company") as string;
+    const address = formData.get("address") as string;
+    const civic = formData.get("civic") as string;
+    const zipCode = formData.get("zipCode") as string;
+    const city = formData.get("city") as string;
+    const province = formData.get("province") as string;
+
+    if (!firstName || !lastName || !address || !civic || !zipCode || !city || !province) {
+      return { error: "Compila tutti i campi obbligatori dell'indirizzo" };
+    }
+
+    shippingAddress = `Destinatario: ${firstName} ${lastName}\n`;
+    if (company && company.trim() !== '') {
+      shippingAddress += `Azienda: ${company}\n`;
+    }
+    shippingAddress += `${address}, ${civic}\n${zipCode} ${city} (${province})`;
+
+    await prisma.recipient.create({
+      data: {
+        userId: session.userId,
+        firstName,
+        lastName,
+        company: company && company.trim() !== '' ? company : null,
+        address,
+        civic,
+        zipCode,
+        city,
+        province
+      }
+    });
   }
-
-  const shippingAddress = `${address}, ${civic}\n${zipCode} ${city} (${province})`;
 
   try {
     const cartItems = await prisma.cartItem.findMany({
@@ -145,13 +181,13 @@ export async function checkout(formData: FormData) {
           quantity: item.quantity
         }));
         
-        await sendOrderConfirmation(
+        sendOrderConfirmation(
           order.id, 
           user.email, 
           admin.email, 
           shippingAddress, 
           itemsList
-        );
+        ).catch(e => console.error("Email error:", e));
       }
     } catch (emailError) {
       console.error("Failed to send order email:", emailError);

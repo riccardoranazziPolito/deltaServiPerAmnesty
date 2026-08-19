@@ -1,7 +1,9 @@
 import { getSession } from "@/app/actions/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { checkout, removeFromCart } from "@/app/actions/catalog";
+import { checkout } from "@/app/actions/catalog";
+
+import AddressForm from "@/components/AddressForm";
 
 export default async function CartPage() {
   const session = await getSession();
@@ -12,70 +14,61 @@ export default async function CartPage() {
     include: { product: true }
   });
 
+  const recipients = await prisma.recipient.findMany({
+    where: { userId: session.userId },
+    orderBy: { createdAt: 'desc' }
+  });
+
+  const total = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h2>Il Tuo Carrello</h2>
+    <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 style={{ margin: 0 }}>Il tuo Carrello</h2>
+      </div>
 
       {cartItems.length === 0 ? (
-        <div className="glass-panel" style={{ textAlign: 'center' }}>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Il tuo carrello è vuoto.</p>
+        <div className="glass-panel" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '2rem' }}>Il tuo carrello è vuoto</p>
           <a href="/catalogo" className="btn btn-primary">Torna al Catalogo</a>
         </div>
       ) : (
         <>
-          <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {cartItems.map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
-                <div>
-                  <h4 style={{ margin: 0 }}>{item.product.name}</h4>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>SKU: {item.product.uniqueCode}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <span>Quantità: <strong>{item.quantity}</strong></span>
-                  <form action={async () => {
-                    "use server";
-                    await removeFromCart(item.id);
-                  }}>
-                    <button type="submit" className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>Rimuovi</button>
-                  </form>
-                </div>
-              </div>
-            ))}
+          <div className="glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {cartItems.map(item => (
+                <li key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid var(--border-color)' }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 0.5rem 0' }}>{item.product.name}</h4>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Codice: {item.product.uniqueCode}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                      x{item.quantity}
+                    </div>
+                    <form action={async () => {
+                      "use server";
+                      await import('@/app/actions/catalog').then(m => m.removeFromCart(item.id));
+                    }}>
+                      <button type="submit" className="btn" style={{ background: 'transparent', color: 'var(--accent-primary)', border: '1px solid var(--accent-primary)', padding: '0.5rem 1rem' }}>
+                        Rimuovi
+                      </button>
+                    </form>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>Totale Pezzi</span>
+              <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent-primary)' }}>{total}</span>
+            </div>
           </div>
 
           <div className="glass-panel">
             <h3>Completa l'Ordine</h3>
             <form action={checkout} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Indirizzo (Via/Piazza)</label>
-                  <input type="text" name="address" className="input-field" required placeholder="Es. Via Roma" />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Civico</label>
-                  <input type="text" name="civic" className="input-field" required placeholder="Es. 10/A" />
-                </div>
-              </div>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>CAP</label>
-                  <input type="text" name="zipCode" className="input-field" required placeholder="Es. 00100" maxLength={5} pattern="[0-9]{5}" title="Il CAP deve essere di 5 cifre" />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Città</label>
-                  <input type="text" name="city" className="input-field" required placeholder="Es. Roma" />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Provincia</label>
-                  <select name="province" className="input-field" required>
-                    <option value="">Seleziona...</option>
-                    {['AG','AL','AN','AO','AQ','AR','AP','AT','AV','BA','BT','BL','BN','BG','BI','BO','BZ','BS','BR','CA','CL','CB','CI','CE','CT','CZ','CH','CO','CS','CR','KR','CN','EN','FM','FE','FI','FG','FC','FR','GE','GO','GR','IM','IS','SP','LT','LE','LC','LI','LO','LU','MC','MN','MS','MT','VS','ME','MI','MO','MB','NA','NO','NU','OG','OT','OR','PD','PA','PR','PV','PG','PU','PE','PC','PI','PT','PN','PZ','PO','RG','RA','RC','RE','RI','RN','RM','RO','SA','SS','SV','SI','SR','SO','TA','TE','TR','TO','TP','TN','TV','TS','UD','VA','VE','VB','VC','VR','VV','VI','VT'].map(prov => (
-                      <option key={prov} value={prov}>{prov}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              <AddressForm recipients={recipients} />
 
               <button type="submit" className="btn btn-primary" style={{ padding: '1rem', marginTop: '1rem' }}>
                 Conferma Ordine

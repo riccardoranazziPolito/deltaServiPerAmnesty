@@ -16,6 +16,7 @@ model User {
   role         String     @default("USER") // ADMIN or USER
   orders       Order[]
   cartItems    CartItem[]
+  recipients   Recipient[]
   createdAt    DateTime   @default(now())
 }
 
@@ -64,4 +65,19 @@ model OrderItem {
   productId String
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
+}
+
+model Recipient {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  firstName String
+  lastName  String
+  company   String?
+  address   String
+  civic     String
+  zipCode   String
+  city      String
+  province  String
+  createdAt DateTime @default(now())
 }
