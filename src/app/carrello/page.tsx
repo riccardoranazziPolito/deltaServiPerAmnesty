@@ -15,8 +15,7 @@ export default async function CartPage() {
   });
 
   const recipients = await prisma.recipient.findMany({
-    where: { userId: session.userId },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { lastName: 'asc' }
   });
 
   const total = cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0);

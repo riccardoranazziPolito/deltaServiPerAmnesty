@@ -78,7 +78,7 @@ export async function checkout(formData: FormData) {
     const recipient = await prisma.recipient.findUnique({
       where: { id: savedRecipientId }
     });
-    if (!recipient || recipient.userId !== session.userId) {
+    if (!recipient) {
       return { error: "Destinatario non valido" };
     }
     shippingAddress = `Destinatario: ${recipient.firstName} ${recipient.lastName}\n`;

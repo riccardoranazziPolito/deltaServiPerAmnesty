@@ -2,7 +2,7 @@ import { getSession, logout } from "@/app/actions/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
-export default async function CatalogPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+export default async function CatalogPage({ searchParams }: { searchParams: Promise<{ category?: string, q?: string }> }) {
   const session = await getSession();
   if (!session) {
     redirect("/login");
@@ -10,11 +10,23 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
 
   const awaitedSearchParams = await searchParams;
   const currentCategoryId = awaitedSearchParams.category;
+  const searchQuery = awaitedSearchParams.q;
 
   const categories = await prisma.category.findMany();
   
   const products = await prisma.product.findMany({
-    where: currentCategoryId ? { categoryId: currentCategoryId } : undefined,
+    where: {
+      AND: [
+        currentCategoryId ? { categoryId: currentCategoryId } : {},
+        searchQuery ? {
+          OR: [
+            { name: { contains: searchQuery, mode: 'insensitive' } },
+            { uniqueCode: { contains: searchQuery, mode: 'insensitive' } },
+            { description: { contains: searchQuery, mode: 'insensitive' } }
+          ]
+        } : {}
+      ]
+    },
     include: { category: true }
   });
 
@@ -34,11 +46,30 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
           </form>
         </div>
       </div>
+      
+      {/* Ricerca */}
+      <form action="/catalogo" method="GET" style={{ display: 'flex', gap: '1rem', width: '100%', maxWidth: '600px' }}>
+        {currentCategoryId && <input type="hidden" name="category" value={currentCategoryId} />}
+        <input 
+          type="text" 
+          name="q" 
+          defaultValue={searchQuery || ""}
+          placeholder="Cerca per nome, codice SKU o descrizione..." 
+          className="input-field" 
+          style={{ flexGrow: 1 }}
+        />
+        <button type="submit" className="btn btn-primary">Cerca</button>
+        {searchQuery && (
+          <a href={currentCategoryId ? `/catalogo?category=${currentCategoryId}` : "/catalogo"} className="btn btn-secondary">
+            Azzera
+          </a>
+        )}
+      </form>
 
       {/* Filtri Categoria */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         <a 
-          href="/catalogo" 
+          href={searchQuery ? `/catalogo?q=${encodeURIComponent(searchQuery)}` : "/catalogo"} 
           className="btn" 
           style={{ background: !currentCategoryId ? 'var(--accent-primary)' : 'var(--glass-bg)', color: 'white' }}
         >
@@ -47,7 +78,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
         {categories.map((c: any) => (
           <a 
             key={c.id}
-            href={`/catalogo?category=${c.id}`} 
+            href={`/catalogo?category=${c.id}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`} 
             className="btn" 
             style={{ background: currentCategoryId === c.id ? 'var(--accent-primary)' : 'var(--glass-bg)', color: 'white' }}
           >
