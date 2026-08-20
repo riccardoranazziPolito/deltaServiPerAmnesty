@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 B2B E-Commerce Platform
 
-## Getting Started
+A modern, full-stack B2B E-Commerce application built with **Next.js 15 (App Router)**, **TypeScript**, and **Prisma ORM**. Designed for wholesale distributors and B2B businesses to manage inventory, process orders, and handle customer accounts seamlessly.
 
-First, run the development server:
+<img width="1510" height="858" alt="Screenshot 2026-08-20 alle 12 35 38" src="https://github.com/user-attachments/assets/23f490c2-0450-4edf-bcdd-10f8b26875e2" />
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🛒 For Clients (B2B Customers)
+- **Secure Authentication**: Session-based authentication system.
+- **Product Catalog**: Browse products with real-time stock availability.
+- **Advanced Search & Filtering**: Global search by Name, SKU, or Description, combined with Category filtering.
+- **Shopping Cart**: Add products, adjust quantities, and manage orders.
+- **Shared Address Book**: Select shipping destinations from a shared company address book.
+- **Automated Email Notifications**: Receive instant order confirmation receipts via email (powered by Nodemailer).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🛡️ For Administrators
+- **Role-Based Access Control (RBAC)**: Secure admin dashboard restricted to authorized personnel.
+- **Inventory Management**: Full CRUD operations for Products and Categories.
+- **Stock Tracking**: Visual indicators for low stock and automatic deduction upon checkout.
+- **User Management**: Create and manage client accounts directly from the dashboard.
+- **Order Notifications**: Automated alerts sent to the admin email whenever a new order is placed.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+- **Frontend**: [Next.js 15](https://nextjs.org/) (React), HTML, Vanilla CSS (Glassmorphism UI design).
+- **Backend**: Next.js Server Actions, Node.js.
+- **Database**: PostgreSQL (hosted on [Supabase](https://supabase.com/)).
+- **ORM**: [Prisma](https://www.prisma.io/) (with `@prisma/adapter-pg`).
+- **Email Service**: Nodemailer (configured with custom SMTP).
+- **Deployment**: [Vercel](https://vercel.com/) (Serverless deployment).
 
-To learn more about Next.js, take a look at the following resources:
+## 🗄️ Database Schema
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The database is built on a relational PostgreSQL architecture managed by Prisma:
+- `User`: Handles authentication and roles (`ADMIN` or `CLIENT`).
+- `Product` & `Category`: Manages inventory and relationships.
+- `CartItem`: Temporary storage for user shopping sessions.
+- `Order`: Finalized transactions linked to users and shipping addresses.
+- `Recipient`: A shared address book for B2B shipping destinations.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Getting Started (Local Development)
 
-## Deploy on Vercel
+### Prerequisites
+- Node.js (v18+)
+- A PostgreSQL database string (e.g., Supabase)
+- An SMTP server for emails (e.g., Gmail, Resend, SendGrid)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Installation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details. 
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/riccardoranazziPolito/deltaServiPerAmnesty.git
+   cd deltaServiPerAmnesty
