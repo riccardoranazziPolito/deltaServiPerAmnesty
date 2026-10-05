@@ -107,6 +107,7 @@ export default async function AdminDashboard() {
               <th style={{ padding: '0.5rem' }}>Categoria</th>
               <th style={{ padding: '0.5rem' }}>Disponibili</th>
               <th style={{ padding: '0.5rem' }}>Aggiorna</th>
+              <th style={{ padding: '0.5rem' }}>Azioni</th>
             </tr>
           </thead>
           <tbody>
@@ -127,6 +128,20 @@ export default async function AdminDashboard() {
                   }} style={{ display: 'flex', gap: '0.5rem' }}>
                     <input type="number" name="q" defaultValue={p.quantity} className="input-field" style={{ width: '80px', padding: '0.25rem' }} />
                     <button type="submit" className="btn btn-primary" style={{ padding: '0.25rem 0.5rem' }}>Salva</button>
+                  </form>
+                </td>
+                <td style={{ padding: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <a href={`/admin/product/${p.id}/edit`} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.85rem' }}>
+                    Modifica
+                  </a>
+                  <form action={async () => {
+                    "use server";
+                    const { deleteProduct } = await import('@/app/actions/admin');
+                    await deleteProduct(p.id);
+                  }}>
+                    <button type="submit" className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.85rem' }} onClick="return confirm('Sei sicuro di voler eliminare questo prodotto?');">
+                      Elimina
+                    </button>
                   </form>
                 </td>
               </tr>
