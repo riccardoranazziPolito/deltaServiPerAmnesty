@@ -1,5 +1,6 @@
 # 🚀 B2B E-Commerce Platform
 
+
 A modern, full-stack B2B E-Commerce application built with **Next.js 15 (App Router)**, **TypeScript**, and **Prisma ORM**. Designed for wholesale distributors and B2B businesses to manage inventory, process orders, and handle customer accounts seamlessly.
 
 <img width="1510" height="858" alt="Screenshot 2026-08-20 alle 12 35 38" src="https://github.com/user-attachments/assets/23f490c2-0450-4edf-bcdd-10f8b26875e2" />
