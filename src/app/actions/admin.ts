@@ -53,9 +53,14 @@ export async function createProduct(formData: FormData) {
       const fileExt = imageFile.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       
+      // Convertiamo il file in ArrayBuffer (necessario per alcuni ambienti Serverless)
+      const fileBuffer = await imageFile.arrayBuffer();
+
       const { data, error } = await supabase.storage
         .from('product-images')
-        .upload(fileName, imageFile);
+        .upload(fileName, fileBuffer, {
+          contentType: imageFile.type,
+        });
         
       if (error) {
         console.error("Errore upload immagine:", error);
@@ -150,10 +155,16 @@ export async function updateProduct(formData: FormData) {
       const fileExt = imageFile.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       
-      const { data, error } = await supabase.storage.from('product-images').upload(fileName, imageFile);
+      const fileBuffer = await imageFile.arrayBuffer();
+
+      const { data, error } = await supabase.storage.from('product-images').upload(fileName, fileBuffer, {
+        contentType: imageFile.type,
+      });
       if (!error) {
         const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(fileName);
         imageUrl = publicUrlData.publicUrl;
+      } else {
+        console.error("Errore upload immagine update:", error);
       }
     }
   }
