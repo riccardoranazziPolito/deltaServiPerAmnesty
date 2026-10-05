@@ -33,6 +33,7 @@ model Product {
   description String?
   quantity    Int         @default(0)
   categoryId  String
+  imageUrl    String?
   category    Category    @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]
   cartItems   CartItem[]

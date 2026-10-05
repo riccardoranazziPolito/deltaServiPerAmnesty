@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { createClient } from '@supabase/supabase-js';
 import { revalidatePath } from "next/cache";
 import { getSession } from "./auth";
 
@@ -32,8 +33,40 @@ export async function createProduct(formData: FormData) {
   const description = formData.get("description") as string;
   const quantityStr = formData.get("quantity") as string;
   const categoryId = formData.get("categoryId") as string;
+  const imageFile = formData.get("image") as File | null;
 
   if (!uniqueCode || !name || !categoryId) return { error: "Campi obbligatori mancanti" };
+
+  let imageUrl = null;
+
+  // Caricamento Immagine su Supabase Storage se presente
+  if (imageFile && imageFile.size > 0) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error("Variabili d'ambiente Supabase mancanti per l'upload dell'immagine.");
+      // Procediamo senza immagine se mancano le chiavi
+    } else {
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      
+      const fileExt = imageFile.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, imageFile);
+        
+      if (error) {
+        console.error("Errore upload immagine:", error);
+      } else {
+        const { data: publicUrlData } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(fileName);
+        imageUrl = publicUrlData.publicUrl;
+      }
+    }
+  }
 
   try {
     await prisma.product.create({
@@ -43,6 +76,7 @@ export async function createProduct(formData: FormData) {
         description,
         quantity: parseInt(quantityStr) || 0,
         categoryId,
+        imageUrl,
       },
     });
     revalidatePath("/admin");

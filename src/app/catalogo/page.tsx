@@ -91,7 +91,14 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
         {products.length === 0 && <p>Nessun prodotto trovato.</p>}
         {products.map((p: any) => (
-          <div key={p.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div key={p.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem' }}>
+            {p.imageUrl ? (
+              <img src={p.imageUrl} alt={p.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '0.5rem' }} />
+            ) : (
+              <div style={{ width: '100%', height: '200px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Nessuna Immagine</span>
+              </div>
+            )}
             <div>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{p.uniqueCode} • {p.category.name}</span>
               <h3 style={{ marginBottom: '0.5rem', marginTop: '0.2rem' }}>{p.name}</h3>

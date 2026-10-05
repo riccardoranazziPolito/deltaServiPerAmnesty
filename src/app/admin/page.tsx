@@ -86,6 +86,12 @@ export default async function AdminDashboard() {
           </select>
           <input type="number" name="quantity" placeholder="Giacenza Iniziale" className="input-field" required />
           <input type="text" name="description" placeholder="Descrizione (opzionale)" className="input-field" style={{ gridColumn: 'span 2' }} />
+          
+          <div style={{ gridColumn: 'span 2' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Immagine Prodotto (opzionale)</label>
+            <input type="file" name="image" accept="image/*" className="input-field" style={{ width: '100%' }} />
+          </div>
+
           <button type="submit" className="btn btn-primary" style={{ gridColumn: 'span 2' }}>Aggiungi Prodotto</button>
         </form>
       </div>
