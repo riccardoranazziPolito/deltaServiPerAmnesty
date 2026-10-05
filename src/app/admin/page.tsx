@@ -139,7 +139,7 @@ export default async function AdminDashboard() {
                     const { deleteProduct } = await import('@/app/actions/admin');
                     await deleteProduct(p.id);
                   }}>
-                    <button type="submit" className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.85rem' }} onClick="return confirm('Sei sicuro di voler eliminare questo prodotto?');">
+                    <button type="submit" className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.85rem' }}>
                       Elimina
                     </button>
                   </form>
