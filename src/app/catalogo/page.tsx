@@ -1,6 +1,7 @@
 import { getSession, logout } from "@/app/actions/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import AddToCartForm from "@/components/AddToCartForm";
 
 export default async function CatalogPage({ searchParams }: { searchParams: Promise<{ category?: string, q?: string }> }) {
   const session = await getSession();
@@ -111,14 +112,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
               </span>
               
               {p.quantity > 0 && (
-                <form action={async (formData: FormData) => {
-                  "use server";
-                  await import('@/app/actions/catalog').then(m => m.addToCart(formData));
-                }} style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input type="hidden" name="productId" value={p.id} />
-                  <input type="number" name="quantity" defaultValue={1} min={1} max={p.quantity} className="input-field" style={{ width: '70px', padding: '0.25rem' }} />
-                  <button type="submit" className="btn btn-primary" style={{ padding: '0.5rem 1rem' }}>Aggiungi</button>
-                </form>
+                <AddToCartForm productId={p.id} maxQuantity={p.quantity} />
               )}
             </div>
           </div>
