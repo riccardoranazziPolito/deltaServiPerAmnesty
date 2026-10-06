@@ -93,7 +93,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
         {products.map((p: any) => (
           <div key={p.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem' }}>
             {p.imageUrl ? (
-              <img src={p.imageUrl} alt={p.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '0.5rem' }} />
+              <img src={p.imageUrl} alt={p.name} style={{ width: '100%', height: '200px', objectFit: 'contain', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', marginBottom: '0.5rem' }} />
             ) : (
               <div style={{ width: '100%', height: '200px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Nessuna Immagine</span>

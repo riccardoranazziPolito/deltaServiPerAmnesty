@@ -2,6 +2,7 @@ import { getSession, logout } from "@/app/actions/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { createCategory, createProduct, createUser, updateStock } from "@/app/actions/admin";
+import AddProductForm from "@/components/AddProductForm";
 
 export default async function AdminDashboard() {
   const session = await getSession();
@@ -77,23 +78,7 @@ export default async function AdminDashboard() {
       {/* Gestione Prodotti */}
       <div className="glass-panel">
         <h3>Nuovo Prodotto</h3>
-        <form action={async (formData) => { "use server"; await createProduct(formData); }} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <input type="text" name="uniqueCode" placeholder="Codice Univoco (SKU)" className="input-field" required />
-          <input type="text" name="name" placeholder="Nome Prodotto" className="input-field" required />
-          <select name="categoryId" className="input-field" required>
-            <option value="">Seleziona Categoria...</option>
-            {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          <input type="number" name="quantity" placeholder="Giacenza Iniziale" className="input-field" required />
-          <input type="text" name="description" placeholder="Descrizione (opzionale)" className="input-field" style={{ gridColumn: 'span 2' }} />
-          
-          <div style={{ gridColumn: 'span 2' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Immagine Prodotto (opzionale)</label>
-            <input type="file" name="image" accept="image/*" className="input-field" style={{ width: '100%' }} />
-          </div>
-
-          <button type="submit" className="btn btn-primary" style={{ gridColumn: 'span 2' }}>Aggiungi Prodotto</button>
-        </form>
+        <AddProductForm categories={categories} />
       </div>
 
       {/* Tabella Giacenze */}
