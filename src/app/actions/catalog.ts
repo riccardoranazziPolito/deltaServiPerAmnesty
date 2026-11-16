@@ -30,8 +30,9 @@ export async function addToCart(formData: FormData) {
     const newTotalQuantity = currentCartQuantity + requestedQuantity;
 
     if (product.quantity < newTotalQuantity) {
-      // Se si usa useActionState il return verrebbe mostrato. Qui evitiamo l'aggiunta in silenzio o lanciamo errore
-      throw new Error(`Non puoi aggiungere questa quantità. Hai già ${currentCartQuantity} pezzi nel carrello e la disponibilità massima è ${product.quantity}.`);
+      return {
+        error: `Non puoi aggiungere questa quantità. Hai già ${currentCartQuantity} pezzi nel carrello e la disponibilità massima è ${product.quantity}.`
+      };
     }
 
     if (existingItem) {
@@ -60,8 +61,8 @@ export async function removeFromCart(cartItemId: string) {
   const session = await getSession();
   if (!session) return { error: "Devi effettuare l'accesso" };
 
-  await prisma.cartItem.delete({
-    where: { id: cartItemId }
+  await prisma.cartItem.deleteMany({
+    where: { id: cartItemId, userId: session.userId }
   });
   
   revalidatePath("/", "layout");
@@ -183,13 +184,13 @@ export async function checkout(formData: FormData) {
           quantity: item.quantity
         }));
         
-        sendOrderConfirmation(
+        await sendOrderConfirmation(
           order.id, 
           user.email, 
           adminEmail, 
           shippingAddress, 
           itemsList
-        ).catch(e => console.error("Email error:", e));
+        );
       }
     } catch (emailError) {
       console.error("Failed to send order email:", emailError);

@@ -1,6 +1,7 @@
 import { getSession, logout } from "@/app/actions/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import AddToCartForm from "@/components/AddToCartForm";
 
 export default async function CatalogPage({ searchParams }: { searchParams: Promise<{ category?: string, q?: string }> }) {
@@ -40,7 +41,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           {session.role === "ADMIN" && (
-            <a href="/admin" className="btn btn-primary" style={{ background: 'transparent', border: '1px solid var(--accent-primary)' }}>Torna ad Admin</a>
+            <Link href="/admin" className="btn btn-secondary" style={{ borderColor: 'var(--accent-primary)' }}>Torna ad Admin</Link>
           )}
           <form action={logout}>
             <button type="submit" className="btn btn-danger">Esci</button>
@@ -61,30 +62,30 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
         />
         <button type="submit" className="btn btn-primary">Cerca</button>
         {searchQuery && (
-          <a href={currentCategoryId ? `/catalogo?category=${currentCategoryId}` : "/catalogo"} className="btn btn-secondary">
+          <Link href={currentCategoryId ? `/catalogo?category=${currentCategoryId}` : "/catalogo"} className="btn btn-secondary">
             Azzera
-          </a>
+          </Link>
         )}
       </form>
 
       {/* Filtri Categoria */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-        <a 
+        <Link 
           href={searchQuery ? `/catalogo?q=${encodeURIComponent(searchQuery)}` : "/catalogo"} 
           className="btn" 
           style={{ background: !currentCategoryId ? 'var(--accent-primary)' : 'var(--glass-bg)', color: 'white' }}
         >
           Tutti
-        </a>
+        </Link>
         {categories.map((c: any) => (
-          <a 
+          <Link 
             key={c.id}
             href={`/catalogo?category=${c.id}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`} 
             className="btn" 
             style={{ background: currentCategoryId === c.id ? 'var(--accent-primary)' : 'var(--glass-bg)', color: 'white' }}
           >
             {c.name}
-          </a>
+          </Link>
         ))}
       </div>
 

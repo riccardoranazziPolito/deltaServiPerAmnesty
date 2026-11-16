@@ -1,8 +1,13 @@
 import { getSession, logout } from "@/app/actions/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { createCategory, createProduct, createUser, updateStock } from "@/app/actions/admin";
 import AddProductForm from "@/components/AddProductForm";
+import {
+  CreateCategoryForm,
+  CreateUserForm,
+  UpdateStockForm,
+  ProductActionButtons,
+} from "@/components/AdminForms";
 
 export default async function AdminDashboard() {
   const session = await getSession();
@@ -35,10 +40,7 @@ export default async function AdminDashboard() {
         {/* Gestione Categorie */}
         <div className="glass-panel">
           <h3>Nuova Categoria</h3>
-          <form action={async (formData) => { "use server"; await createCategory(formData); }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <input type="text" name="name" placeholder="Nome Categoria" className="input-field" required />
-            <button type="submit" className="btn btn-primary">Aggiungi</button>
-          </form>
+          <CreateCategoryForm />
           <ul style={{ marginTop: '1rem', listStyle: 'none' }}>
             {categories.map((c: any) => (
               <li key={c.id} style={{ padding: '0.5rem 0', borderBottom: '1px solid var(--border-color)' }}>{c.name}</li>
@@ -49,18 +51,7 @@ export default async function AdminDashboard() {
         {/* Gestione Utenti */}
         <div className="glass-panel">
           <h3>Nuovo Utente (Cliente)</h3>
-          <form action={async (formData) => { "use server"; await createUser(formData); }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <input type="text" name="firstName" placeholder="Nome" className="input-field" required />
-              <input type="text" name="lastName" placeholder="Cognome" className="input-field" required />
-            </div>
-            <input type="email" name="email" placeholder="Email" className="input-field" required />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <input type="text" name="username" placeholder="Username" className="input-field" required />
-              <input type="text" name="password" placeholder="Password" className="input-field" required />
-            </div>
-            <button type="submit" className="btn btn-primary">Crea Utente</button>
-          </form>
+          <CreateUserForm />
           <ul style={{ marginTop: '1rem', listStyle: 'none' }}>
             {users.map((u: any) => (
               <li key={u.id} style={{ padding: '0.5rem 0', borderBottom: '1px solid var(--border-color)' }}>
@@ -107,27 +98,10 @@ export default async function AdminDashboard() {
                   </span>
                 </td>
                 <td style={{ padding: '0.5rem' }}>
-                  <form action={async (formData: FormData) => {
-                    "use server";
-                    await updateStock(p.id, parseInt(formData.get("q") as string));
-                  }} style={{ display: 'flex', gap: '0.5rem' }}>
-                    <input type="number" name="q" defaultValue={p.quantity} className="input-field" style={{ width: '80px', padding: '0.25rem' }} />
-                    <button type="submit" className="btn btn-primary" style={{ padding: '0.25rem 0.5rem' }}>Salva</button>
-                  </form>
+                  <UpdateStockForm productId={p.id} initialQuantity={p.quantity} />
                 </td>
-                <td style={{ padding: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <a href={`/admin/product/${p.id}/edit`} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.85rem' }}>
-                    Modifica
-                  </a>
-                  <form action={async () => {
-                    "use server";
-                    const { deleteProduct } = await import('@/app/actions/admin');
-                    await deleteProduct(p.id);
-                  }}>
-                    <button type="submit" className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.85rem' }}>
-                      Elimina
-                    </button>
-                  </form>
+                <td style={{ padding: '0.5rem' }}>
+                  <ProductActionButtons productId={p.id} />
                 </td>
               </tr>
             ))}

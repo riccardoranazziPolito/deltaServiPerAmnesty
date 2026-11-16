@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import MiniCart from "@/components/MiniCart";
+import { getSession, logout } from "@/app/actions/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,11 +12,13 @@ export const metadata: Metadata = {
   description: "E-Commerce aziendale interno",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSession();
+
   return (
     <html lang="it">
       <body className={inter.className}>
@@ -34,16 +37,31 @@ export default function RootLayout({
           <Link href="/" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>
             Delta Service
           </Link>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <Link href="/catalogo" className="btn btn-primary" style={{ background: 'transparent', boxShadow: 'none', border: '1px solid var(--border-color)' }}>
-              Catalogo
-            </Link>
-            <Link href="/carrello" className="btn btn-primary" style={{ background: 'transparent', boxShadow: 'none', border: '1px solid var(--border-color)' }}>
-              Carrello
-            </Link>
-            <Link href="/login" className="btn btn-primary">
-              Accedi
-            </Link>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            {session ? (
+              <>
+                <Link href="/catalogo" className="btn btn-secondary">
+                  Catalogo
+                </Link>
+                <Link href="/carrello" className="btn btn-secondary">
+                  Carrello
+                </Link>
+                {session.role === "ADMIN" && (
+                  <Link href="/admin" className="btn btn-secondary" style={{ borderColor: 'var(--accent-primary)' }}>
+                    Admin
+                  </Link>
+                )}
+                <form action={logout}>
+                  <button type="submit" className="btn btn-danger">
+                    Esci
+                  </button>
+                </form>
+              </>
+            ) : (
+              <Link href="/login" className="btn btn-primary">
+                Accedi
+              </Link>
+            )}
           </div>
         </nav>
         <main className="container animate-fade-in" style={{ padding: '2rem 1.5rem', flex: 1 }}>

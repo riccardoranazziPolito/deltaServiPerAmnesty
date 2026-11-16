@@ -37,6 +37,11 @@ export async function createProduct(formData: FormData) {
 
   if (!uniqueCode || !name || !categoryId) return { error: "Campi obbligatori mancanti" };
 
+  const parsedQuantity = parseInt(quantityStr, 10);
+  if (isNaN(parsedQuantity) || parsedQuantity < 0) {
+    return { error: "La giacenza deve essere un numero maggiore o uguale a 0" };
+  }
+
   let imageUrl = null;
 
   // Caricamento Immagine su Supabase Storage se presente
@@ -79,12 +84,13 @@ export async function createProduct(formData: FormData) {
         uniqueCode,
         name,
         description,
-        quantity: parseInt(quantityStr) || 0,
+        quantity: parsedQuantity,
         categoryId,
         imageUrl,
       },
     });
     revalidatePath("/admin");
+    revalidatePath("/catalogo");
     return { success: true };
   } catch (e) {
     return { error: "Errore o codice SKU già esistente" };
@@ -93,12 +99,20 @@ export async function createProduct(formData: FormData) {
 
 export async function updateStock(productId: string, quantity: number) {
   await checkAdmin();
-  await prisma.product.update({
-    where: { id: productId },
-    data: { quantity },
-  });
-  revalidatePath("/admin");
-  revalidatePath("/catalogo");
+  if (isNaN(quantity) || quantity < 0) {
+    return { error: "La quantità deve essere maggiore o uguale a 0" };
+  }
+  try {
+    await prisma.product.update({
+      where: { id: productId },
+      data: { quantity },
+    });
+    revalidatePath("/admin");
+    revalidatePath("/catalogo");
+    return { success: true };
+  } catch (e) {
+    return { error: "Errore durante l'aggiornamento della giacenza" };
+  }
 }
 
 export async function createUser(formData: FormData) {
@@ -143,6 +157,11 @@ export async function updateProduct(formData: FormData) {
 
   if (!id || !uniqueCode || !name || !categoryId) return { error: "Campi obbligatori mancanti" };
 
+  const parsedQuantity = parseInt(quantityStr, 10);
+  if (isNaN(parsedQuantity) || parsedQuantity < 0) {
+    return { error: "La giacenza deve essere un numero maggiore o uguale a 0" };
+  }
+
   let imageUrl: string | undefined = undefined;
 
   // Caricamento Immagine se fornita una nuova
@@ -174,7 +193,7 @@ export async function updateProduct(formData: FormData) {
       uniqueCode,
       name,
       description,
-      quantity: parseInt(quantityStr) || 0,
+      quantity: parsedQuantity,
       categoryId,
     };
     if (imageUrl !== undefined) {
