@@ -35,7 +35,6 @@ export default async function UserOrderDetailPage({
   const steps = [
     { key: "NUOVO", label: "Nuovo" },
     { key: "EVASO", label: "Evaso" },
-    { key: "CONSEGNATO", label: "Consegnato" },
   ];
   const currentStepIndex = Math.max(
     0,
@@ -63,7 +62,7 @@ export default async function UserOrderDetailPage({
       {/* Avanzamento Stato Ordine */}
       <div className="glass-panel">
         <h3 style={{ marginBottom: "1.25rem", fontSize: "1.05rem" }}>Stato di Avanzamento</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
           {steps.map((step, index) => {
             const isCompleted = index <= currentStepIndex;
             const isCurrent = index === currentStepIndex;

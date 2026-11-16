@@ -1,16 +1,11 @@
-export type OrderStatus = "NUOVO" | "EVASO" | "CONSEGNATO";
+export type OrderStatus = "NUOVO" | "EVASO";
 
 export function formatOrderStatus(status?: string | null): string {
   const normalized = (status || "NUOVO").toUpperCase();
-  switch (normalized) {
-    case "EVASO":
-      return "Evaso";
-    case "CONSEGNATO":
-      return "Consegnato";
-    case "NUOVO":
-    default:
-      return "Nuovo";
+  if (normalized === "EVASO") {
+    return "Evaso";
   }
+  return "Nuovo";
 }
 
 export default function OrderStatusBadge({ status }: { status?: string | null }) {
@@ -22,15 +17,10 @@ export default function OrderStatusBadge({ status }: { status?: string | null })
   let label = "Nuovo";
 
   if (normalized === "EVASO") {
-    bg = "rgba(59, 130, 246, 0.18)";
-    color = "#60a5fa";
-    border = "1px solid #60a5fa";
-    label = "Evaso";
-  } else if (normalized === "CONSEGNATO") {
     bg = "rgba(16, 185, 129, 0.18)";
     color = "var(--success)";
     border = "1px solid var(--success)";
-    label = "Consegnato";
+    label = "Evaso";
   }
 
   return (

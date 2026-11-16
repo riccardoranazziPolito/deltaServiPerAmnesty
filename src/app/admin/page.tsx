@@ -9,6 +9,7 @@ import {
   CreateUserForm,
   UpdateStockForm,
   ProductActionButtons,
+  UpdateOrderStatusForm,
 } from "@/components/AdminForms";
 
 export default async function AdminDashboard({
@@ -31,7 +32,7 @@ export default async function AdminDashboard({
     orderBy: { createdAt: "desc" },
   });
 
-  const validStatuses = ["NUOVO", "EVASO", "CONSEGNATO"];
+  const validStatuses = ["NUOVO", "EVASO"];
   const whereOrder = validStatuses.includes(statusFilter)
     ? { status: statusFilter }
     : {};
@@ -57,9 +58,14 @@ export default async function AdminDashboard({
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
         <h2>Pannello Amministratore</h2>
-        <form action={logout}>
-          <button type="submit" className="btn btn-danger">Esci</button>
-        </form>
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
+          <Link href="/admin/orders" className="btn btn-primary">
+            Gestione Ordini ({orders.length}) →
+          </Link>
+          <form action={logout}>
+            <button type="submit" className="btn btn-danger">Esci</button>
+          </form>
+        </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem" }}>
@@ -197,7 +203,6 @@ export default async function AdminDashboard({
                 { key: "ALL", label: "Tutti" },
                 { key: "NUOVO", label: "Nuovo" },
                 { key: "EVASO", label: "Evaso" },
-                { key: "CONSEGNATO", label: "Consegnato" },
               ].map((s) => {
                 const isActive = statusFilter === s.key;
                 return (
@@ -269,16 +274,21 @@ export default async function AdminDashboard({
                     </strong>
                     <OrderStatusBadge status={order.status} />
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
                     <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
                       {order.createdAt.toLocaleString("it-IT")}
                     </span>
+                    <UpdateOrderStatusForm
+                      orderId={order.id}
+                      currentStatus={order.status || "NUOVO"}
+                      compact={true}
+                    />
                     <Link
                       href={`/admin/orders/${order.id}`}
-                      className="btn btn-primary"
+                      className="btn btn-secondary"
                       style={{ padding: "0.35rem 0.85rem", fontSize: "0.85rem" }}
                     >
-                      Gestisci Ordine →
+                      Dettagli →
                     </Link>
                   </div>
                 </div>

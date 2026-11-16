@@ -245,7 +245,7 @@ export async function deleteProduct(productId: string) {
 export async function updateOrderStatus(orderId: string, status: string) {
   await checkAdmin();
   const normalizedStatus = status.toUpperCase();
-  const allowedStatuses = ["NUOVO", "EVASO", "CONSEGNATO"];
+  const allowedStatuses = ["NUOVO", "EVASO"];
   if (!orderId || !allowedStatuses.includes(normalizedStatus)) {
     return { error: "Stato ordine non valido" };
   }

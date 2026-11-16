@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -401,26 +401,33 @@ export function EditProductForm({
 export function UpdateOrderStatusForm({
   orderId,
   currentStatus,
+  compact = false,
 }: {
   orderId: string;
   currentStatus: string;
+  compact?: boolean;
 }) {
-  const [status, setStatus] = useState(currentStatus.toUpperCase() || "NUOVO");
+  const router = useRouter();
+  const [status, setStatus] = useState((currentStatus || "NUOVO").toUpperCase());
   const [savingState, setSavingState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = async (formData: FormData) => {
-    const newStatus = (formData.get("status") as string) || status;
+  useEffect(() => {
+    setStatus((currentStatus || "NUOVO").toUpperCase());
+  }, [currentStatus]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setSavingState("saving");
     setErrorMsg("");
     try {
-      const res = await updateOrderStatus(orderId, newStatus);
+      const res = await updateOrderStatus(orderId, status);
       if (res?.error) {
         setSavingState("error");
         setErrorMsg(res.error);
       } else {
-        setStatus(newStatus);
         setSavingState("saved");
+        router.refresh();
         setTimeout(() => setSavingState("idle"), 2500);
       }
     } catch {
@@ -430,28 +437,41 @@ export function UpdateOrderStatusForm({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
       <form
-        action={handleSubmit}
-        style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}
+        onSubmit={handleSubmit}
+        style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}
       >
         <select
           name="status"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
           className="input-field"
-          style={{ width: "auto", minWidth: "180px", fontWeight: 600 }}
+          style={{
+            width: "auto",
+            minWidth: compact ? "140px" : "180px",
+            padding: compact ? "0.4rem 0.75rem" : "0.65rem 1rem",
+            fontSize: compact ? "0.85rem" : "0.95rem",
+            fontWeight: 600,
+          }}
         >
           <option value="NUOVO">Nuovo</option>
           <option value="EVASO">Evaso</option>
-          <option value="CONSEGNATO">Consegnato</option>
         </select>
-        <button type="submit" className="btn btn-primary" disabled={savingState === "saving"}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={savingState === "saving"}
+          style={{
+            padding: compact ? "0.4rem 0.85rem" : "0.65rem 1.25rem",
+            fontSize: compact ? "0.85rem" : "0.95rem",
+          }}
+        >
           {savingState === "saving"
-            ? "Aggiornamento..."
+            ? "Salvataggio..."
             : savingState === "saved"
-            ? "✓ Stato Aggiornato"
-            : "Aggiorna Stato"}
+            ? "✓ Aggiornato"
+            : "Cambia Stato"}
         </button>
       </form>
       {savingState === "error" && <FeedbackBanner message={errorMsg} isError={true} />}

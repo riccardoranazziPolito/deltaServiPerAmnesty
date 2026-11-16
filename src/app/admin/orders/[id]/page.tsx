@@ -47,9 +47,14 @@ export default async function AdminOrderDetailPage({
             Effettuato il {order.createdAt.toLocaleString("it-IT")}
           </span>
         </div>
-        <Link href="/admin#ordini" className="btn btn-secondary">
-          ← Torna agli Ordini Admin
-        </Link>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+          <Link href="/admin/orders" className="btn btn-secondary">
+            ← Tutti gli Ordini
+          </Link>
+          <Link href="/admin" className="btn btn-secondary">
+            Pannello Admin
+          </Link>
+        </div>
       </div>
 
       {/* Gestione Stato Ordine */}

@@ -58,7 +58,7 @@ model Order {
   user            User        @relation(fields: [userId], references: [id])
   shippingAddress String
   notes           String?
-  status          String      @default("NUOVO") // NUOVO, EVASO, CONSEGNATO
+  status          String      @default("NUOVO") // NUOVO, EVASO
   items           OrderItem[]
   createdAt       DateTime    @default(now())
 }
