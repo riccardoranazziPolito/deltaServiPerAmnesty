@@ -8,7 +8,14 @@ export default function LoginPage() {
 
   return (
     <div className="flex-center" style={{ minHeight: '60vh' }}>
-      <div className="glass-panel" style={{ width: '100%', maxWidth: '400px' }}>
+      <div className="glass-panel" style={{ width: '100%', maxWidth: '420px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+          <img
+            src="/logo.webp"
+            alt="Amnesty International"
+            style={{ height: '64px', width: 'auto', borderRadius: '6px' }}
+          />
+        </div>
         <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Accesso Portale</h2>
         
         {state?.error && (

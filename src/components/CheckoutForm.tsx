@@ -64,9 +64,14 @@ export default function CheckoutForm({
         <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", marginBottom: "2rem" }}>
           Il tuo ordine è stato registrato e riceverai a breve un&apos;email di riepilogo.
         </p>
-        <Link href="/catalogo" className="btn btn-primary">
-          Torna al Catalogo
-        </Link>
+        <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
+          <Link href="/ordini" className="btn btn-primary">
+            Visualizza I Miei Ordini
+          </Link>
+          <Link href="/catalogo" className="btn btn-secondary">
+            Torna al Catalogo
+          </Link>
+        </div>
       </div>
     );
   }

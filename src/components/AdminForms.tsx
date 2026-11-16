@@ -9,6 +9,8 @@ import {
   updateStock,
   deleteProduct,
   updateProduct,
+  updateOrderStatus,
+  updateUser,
 } from "@/app/actions/admin";
 
 function FeedbackBanner({ message, isError }: { message: string; isError: boolean }) {
@@ -391,6 +393,204 @@ export function EditProductForm({
         style={{ gridColumn: "span 2", marginTop: "0.5rem" }}
       >
         {isSubmitting ? "Salvataggio in corso..." : "Salva Modifiche"}
+      </button>
+    </form>
+  );
+}
+
+export function UpdateOrderStatusForm({
+  orderId,
+  currentStatus,
+}: {
+  orderId: string;
+  currentStatus: string;
+}) {
+  const [status, setStatus] = useState(currentStatus.toUpperCase() || "NUOVO");
+  const [savingState, setSavingState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (formData: FormData) => {
+    const newStatus = (formData.get("status") as string) || status;
+    setSavingState("saving");
+    setErrorMsg("");
+    try {
+      const res = await updateOrderStatus(orderId, newStatus);
+      if (res?.error) {
+        setSavingState("error");
+        setErrorMsg(res.error);
+      } else {
+        setStatus(newStatus);
+        setSavingState("saved");
+        setTimeout(() => setSavingState("idle"), 2500);
+      }
+    } catch {
+      setSavingState("error");
+      setErrorMsg("Errore durante l'aggiornamento dello stato.");
+    }
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <form
+        action={handleSubmit}
+        style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}
+      >
+        <select
+          name="status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="input-field"
+          style={{ width: "auto", minWidth: "180px", fontWeight: 600 }}
+        >
+          <option value="NUOVO">Nuovo</option>
+          <option value="EVASO">Evaso</option>
+          <option value="CONSEGNATO">Consegnato</option>
+        </select>
+        <button type="submit" className="btn btn-primary" disabled={savingState === "saving"}>
+          {savingState === "saving"
+            ? "Aggiornamento..."
+            : savingState === "saved"
+            ? "✓ Stato Aggiornato"
+            : "Aggiorna Stato"}
+        </button>
+      </form>
+      {savingState === "error" && <FeedbackBanner message={errorMsg} isError={true} />}
+    </div>
+  );
+}
+
+export function EditUserForm({
+  user,
+}: {
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+    role: string;
+  };
+}) {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  const handleSubmit = async (formData: FormData) => {
+    setIsSubmitting(true);
+    setMessage("");
+    try {
+      const res = await updateUser(formData);
+      if (res?.error) {
+        setIsError(true);
+        setMessage(res.error);
+      } else {
+        setIsError(false);
+        setMessage("✅ Informazioni account aggiornate con successo!");
+        router.refresh();
+      }
+    } catch {
+      setIsError(true);
+      setMessage("Errore imprevisto durante l'aggiornamento dell'account.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form
+      action={handleSubmit}
+      style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}
+    >
+      <input type="hidden" name="id" value={user.id} />
+
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem", color: "var(--text-secondary)" }}>
+          Nome
+        </label>
+        <input
+          type="text"
+          name="firstName"
+          defaultValue={user.firstName}
+          className="input-field"
+          required
+        />
+      </div>
+
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem", color: "var(--text-secondary)" }}>
+          Cognome
+        </label>
+        <input
+          type="text"
+          name="lastName"
+          defaultValue={user.lastName}
+          className="input-field"
+          required
+        />
+      </div>
+
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem", color: "var(--text-secondary)" }}>
+          Username
+        </label>
+        <input
+          type="text"
+          name="username"
+          defaultValue={user.username}
+          className="input-field"
+          required
+        />
+      </div>
+
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem", color: "var(--text-secondary)" }}>
+          Email
+        </label>
+        <input
+          type="email"
+          name="email"
+          defaultValue={user.email}
+          className="input-field"
+          required
+        />
+      </div>
+
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem", color: "var(--text-secondary)" }}>
+          Ruolo Account
+        </label>
+        <select name="role" defaultValue={user.role} className="input-field" required>
+          <option value="USER">Cliente (USER)</option>
+          <option value="ADMIN">Amministratore (ADMIN)</option>
+        </select>
+      </div>
+
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem", color: "var(--text-secondary)" }}>
+          Nuova Password (lascia vuoto per non modificarla)
+        </label>
+        <input
+          type="text"
+          name="password"
+          placeholder="Inserisci nuova password..."
+          className="input-field"
+        />
+      </div>
+
+      {message && (
+        <div style={{ gridColumn: "span 2" }}>
+          <FeedbackBanner message={message} isError={isError} />
+        </div>
+      )}
+
+      <button
+        type="submit"
+        className="btn btn-primary"
+        disabled={isSubmitting}
+        style={{ gridColumn: "span 2", marginTop: "0.5rem" }}
+      >
+        {isSubmitting ? "Salvataggio in corso..." : "Salva Informazioni Account"}
       </button>
     </form>
   );

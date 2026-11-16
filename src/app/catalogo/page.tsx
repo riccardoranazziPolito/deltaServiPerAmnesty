@@ -72,8 +72,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         <Link 
           href={searchQuery ? `/catalogo?q=${encodeURIComponent(searchQuery)}` : "/catalogo"} 
-          className="btn" 
-          style={{ background: !currentCategoryId ? 'var(--accent-primary)' : 'var(--glass-bg)', color: 'white' }}
+          className={`btn ${!currentCategoryId ? 'btn-primary' : 'btn-secondary'}`}
         >
           Tutti
         </Link>
@@ -81,8 +80,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
           <Link 
             key={c.id}
             href={`/catalogo?category=${c.id}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`} 
-            className="btn" 
-            style={{ background: currentCategoryId === c.id ? 'var(--accent-primary)' : 'var(--glass-bg)', color: 'white' }}
+            className={`btn ${currentCategoryId === c.id ? 'btn-primary' : 'btn-secondary'}`}
           >
             {c.name}
           </Link>

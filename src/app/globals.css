@@ -1,19 +1,19 @@
 :root {
-  /* Colors */
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --accent-primary: #3b82f6;
-  --accent-hover: #2563eb;
+  /* Amnesty International Black & Yellow Palette */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --accent-primary: #ffff00;
+  --accent-hover: #e6e600;
   --danger: #ef4444;
   --success: #10b981;
-  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color: rgba(255, 255, 255, 0.12);
 
   /* Glassmorphism */
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(20, 20, 20, 0.88);
+  --glass-border: 1px solid rgba(255, 255, 0, 0.22);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   --glass-blur: blur(12px);
 
   /* Typography */
@@ -38,7 +38,7 @@ body {
 /* Typography Base */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 1rem;
 }
 
@@ -70,7 +70,7 @@ a:hover {
   justify-content: center;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  font-weight: 500;
+  font-weight: 600;
   font-family: var(--font-family);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -86,13 +86,14 @@ a:hover {
 
 .btn-primary {
   background-color: var(--accent-primary);
-  color: white;
-  box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+  color: #000000;
+  font-weight: 700;
+  box-shadow: 0 4px 14px 0 rgba(255, 255, 0, 0.22);
 }
 
 .btn-primary:hover {
   background-color: var(--accent-hover);
-  color: white;
+  color: #000000;
   transform: translateY(-1px);
 }
 
@@ -103,7 +104,8 @@ a:hover {
 }
 
 .btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 0, 0.12);
+  border-color: var(--accent-primary);
   color: var(--text-primary);
   transform: translateY(-1px);
 }
@@ -122,19 +124,19 @@ a:hover {
 .input-field {
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(10, 10, 10, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 8px;
   color: var(--text-primary);
   font-family: var(--font-family);
   font-size: 0.95rem;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 0, 0.25);
 }
 
 /* Layout Utilities */

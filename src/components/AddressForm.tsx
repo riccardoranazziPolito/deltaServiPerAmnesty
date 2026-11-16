@@ -95,6 +95,18 @@ export default function AddressForm({ recipients }: { recipients: Recipient[] })
           </div>
         </div>
       )}
+
+      <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+          Note per la consegna (Opzionale)
+        </label>
+        <textarea
+          name="notes"
+          className="input-field"
+          placeholder="Eventuali indicazioni per il corriere (es. citofono, piano, orari di consegna)..."
+          style={{ minHeight: '80px', resize: 'vertical' }}
+        />
+      </div>
     </div>
   );
 }

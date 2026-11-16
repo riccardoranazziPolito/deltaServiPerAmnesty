@@ -8,8 +8,8 @@ import { getSession, logout } from "@/app/actions/auth";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "B2B Management",
-  description: "E-Commerce aziendale interno",
+  title: "Amnesty International • Delta Service B2B",
+  description: "Portale B2B per la gestione ordini e materiali",
 };
 
 export default async function RootLayout({
@@ -23,31 +23,40 @@ export default async function RootLayout({
     <html lang="it">
       <body className={inter.className}>
         <nav style={{
-          padding: '1rem 2rem',
-          borderBottom: 'var(--glass-border)',
-          background: 'var(--glass-bg)',
-          backdropFilter: 'blur(12px)',
+          padding: '0.85rem 2rem',
+          borderBottom: '2px solid var(--accent-primary)',
+          background: '#000000',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           position: 'sticky',
           top: 0,
-          zIndex: 100
+          zIndex: 100,
+          flexWrap: 'wrap',
+          gap: '1rem'
         }}>
-          <Link href="/" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            Delta Service
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            <img
+              src="/logo.webp"
+              alt="Amnesty International"
+              style={{ height: '44px', width: 'auto', borderRadius: '4px', display: 'block' }}
+            />
+            <span>Delta Service</span>
           </Link>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
             {session ? (
               <>
                 <Link href="/catalogo" className="btn btn-secondary">
                   Catalogo
                 </Link>
+                <Link href="/ordini" className="btn btn-secondary">
+                  I Miei Ordini
+                </Link>
                 <Link href="/carrello" className="btn btn-secondary">
                   Carrello
                 </Link>
                 {session.role === "ADMIN" && (
-                  <Link href="/admin" className="btn btn-secondary" style={{ borderColor: 'var(--accent-primary)' }}>
+                  <Link href="/admin" className="btn btn-secondary" style={{ borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)' }}>
                     Admin
                   </Link>
                 )}
@@ -73,9 +82,19 @@ export default async function RootLayout({
           padding: '2rem',
           color: 'var(--text-secondary)',
           borderTop: '1px solid var(--border-color)',
-          marginTop: 'auto'
+          background: '#050505',
+          marginTop: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.75rem'
         }}>
-          © {new Date().getFullYear()} Delta Service. Tutti i diritti riservati.
+          <img
+            src="/logo.webp"
+            alt="Amnesty International"
+            style={{ height: '32px', width: 'auto', borderRadius: '4px' }}
+          />
+          <span>© {new Date().getFullYear()} Delta Service • Amnesty International. Tutti i diritti riservati.</span>
         </footer>
       </body>
     </html>

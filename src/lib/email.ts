@@ -35,19 +35,21 @@ export async function sendOrderConfirmation(
   userEmail: string,
   adminEmail: string,
   shippingAddress: string,
-  items: { productName: string; uniqueCode: string; quantity: number }[]
+  items: { productName: string; uniqueCode: string; quantity: number }[],
+  notes?: string | null
 ) {
   const transporter = await getTransporter();
 
   // Costruisci il corpo del messaggio
   const itemsList = items.map(i => `- ${i.quantity}x ${i.productName} (SKU: ${i.uniqueCode})`).join('\n');
+  const notesSection = notes ? `\nNote per la consegna:\n${notes}\n` : "";
   
   const textContent = `
 Nuovo Ordine Confermato! (ID Ordine: #${orderId.slice(-6).toUpperCase()})
 
 Indirizzo di spedizione:
 ${shippingAddress}
-
+${notesSection}
 Materiali ordinati:
 ${itemsList}
 

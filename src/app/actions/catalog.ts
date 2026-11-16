@@ -73,6 +73,8 @@ export async function checkout(formData: FormData) {
   if (!session) return { error: "Devi effettuare l'accesso" };
 
   const savedRecipientId = formData.get("savedRecipientId") as string;
+  const notesRaw = formData.get("notes") as string | null;
+  const notes = notesRaw && notesRaw.trim() !== "" ? notesRaw.trim() : null;
   let shippingAddress = "";
 
   if (savedRecipientId && savedRecipientId !== "new") {
@@ -153,6 +155,8 @@ export async function checkout(formData: FormData) {
         data: {
           userId: session.userId,
           shippingAddress,
+          notes,
+          status: "NUOVO",
           items: {
             create: cartItems.map(item => ({
               productId: item.productId,
@@ -189,7 +193,8 @@ export async function checkout(formData: FormData) {
           user.email, 
           adminEmail, 
           shippingAddress, 
-          itemsList
+          itemsList,
+          notes
         );
       }
     } catch (emailError) {
@@ -200,6 +205,7 @@ export async function checkout(formData: FormData) {
 
     revalidatePath("/catalogo");
     revalidatePath("/carrello");
+    revalidatePath("/ordini");
     revalidatePath("/admin");
     return { success: true };
   } catch (error: any) {

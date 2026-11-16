@@ -241,3 +241,77 @@ export async function deleteProduct(productId: string) {
     return { error: "Errore durante l'eliminazione del prodotto" };
   }
 }
+
+export async function updateOrderStatus(orderId: string, status: string) {
+  await checkAdmin();
+  const normalizedStatus = status.toUpperCase();
+  const allowedStatuses = ["NUOVO", "EVASO", "CONSEGNATO"];
+  if (!orderId || !allowedStatuses.includes(normalizedStatus)) {
+    return { error: "Stato ordine non valido" };
+  }
+
+  try {
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { status: normalizedStatus },
+    });
+    revalidatePath("/admin");
+    revalidatePath(`/admin/orders/${orderId}`);
+    revalidatePath("/ordini");
+    revalidatePath(`/ordini/${orderId}`);
+    return { success: true };
+  } catch (e) {
+    return { error: "Errore durante l'aggiornamento dello stato dell'ordine" };
+  }
+}
+
+export async function updateUser(formData: FormData) {
+  await checkAdmin();
+  const id = formData.get("id") as string;
+  const firstName = (formData.get("firstName") as string)?.trim();
+  const lastName = (formData.get("lastName") as string)?.trim();
+  const email = (formData.get("email") as string)?.trim();
+  const username = (formData.get("username") as string)?.trim();
+  const password = (formData.get("password") as string)?.trim();
+  const role = ((formData.get("role") as string) || "USER").toUpperCase();
+
+  if (!id || !firstName || !lastName || !email || !username) {
+    return { error: "Compila tutti i campi obbligatori" };
+  }
+
+  if (role !== "USER" && role !== "ADMIN") {
+    return { error: "Ruolo non valido" };
+  }
+
+  try {
+    const updateData: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      username: string;
+      role: string;
+      passwordHash?: string;
+    } = {
+      firstName,
+      lastName,
+      email,
+      username,
+      role,
+    };
+
+    if (password && password.length > 0) {
+      updateData.passwordHash = password;
+    }
+
+    await prisma.user.update({
+      where: { id },
+      data: updateData,
+    });
+
+    revalidatePath("/admin");
+    revalidatePath(`/admin/users/${id}/edit`);
+    return { success: true };
+  } catch (e) {
+    return { error: "Errore durante l'aggiornamento: Username o Email già in uso" };
+  }
+}
