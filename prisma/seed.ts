@@ -16,7 +16,7 @@ async function main() {
     await prisma.user.create({
       data: {
         username: 'admin',
-        email: 'admin@deltaservice.it',
+        email: 'ordine@deltaserviceitalia.com',
         firstName: 'Admin',
         lastName: 'Sistema',
         passwordHash: 'admin123',

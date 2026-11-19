@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getSession } from "./auth";
-import { sendOrderConfirmation } from "@/lib/email";
+import { sendOrderConfirmation, DEFAULT_ADMIN_ORDER_EMAIL } from "@/lib/email";
 
 export async function addToCart(formData: FormData) {
   const session = await getSession();
@@ -177,11 +177,9 @@ export async function checkout(formData: FormData) {
     // --- SEND EMAILS ---
     try {
       const user = await prisma.user.findUnique({ where: { id: session.userId } });
-      const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
-      
-      const adminEmail = process.env.ADMIN_EMAIL || admin?.email;
+      const adminEmail = process.env.ADMIN_EMAIL || DEFAULT_ADMIN_ORDER_EMAIL;
 
-      if (user && user.email && adminEmail) {
+      if (user) {
         const itemsList = cartItems.map(item => ({
           productName: item.product.name,
           uniqueCode: item.product.uniqueCode,

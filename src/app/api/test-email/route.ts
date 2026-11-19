@@ -1,53 +1,59 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import {
+  createSmtpTransporter,
+  DEFAULT_SENDER_EMAIL,
+  DEFAULT_ADMIN_ORDER_EMAIL,
+} from '@/lib/email';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  const host = (process.env.SMTP_HOST || "smtp.gmail.com").trim();
+  const port = Number(process.env.SMTP_PORT) || 465;
+  const user = (process.env.SMTP_USER || DEFAULT_SENDER_EMAIL).trim();
+  const recipient = (process.env.ADMIN_EMAIL || DEFAULT_ADMIN_ORDER_EMAIL).trim();
+
   try {
-    if (!process.env.SMTP_HOST || !process.env.SMTP_USER) {
+    if (!process.env.SMTP_PASS) {
       return NextResponse.json({ 
         success: false, 
-        error: "Le variabili SMTP non sono ancora state configurate o lette da Vercel." 
+        error: "La variabile SMTP_PASS non è configurata nelle variabili d'ambiente." 
       }, { status: 500 });
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+    const transporter = createSmtpTransporter();
 
-    // 1. Testa solo se la connessione e le credenziali sono accettate da Register
+    // 1. Testa se la connessione e le credenziali sono accettate dal server SMTP
     await transporter.verify();
 
-    // 2. Prova a inviare un'email finta a te stesso
+    // 2. Invia un'email di test dal mittente (deltaservice.ecommerce@gmail.com) al destinatario ordini (ordine@deltaserviceitalia.com)
     const info = await transporter.sendMail({
-      from: `"Test Vercel" <${process.env.SMTP_USER}>`,
-      to: process.env.SMTP_USER,
-      subject: "Test connessione Register.it - OK",
-      text: "Se stai leggendo questa email, Vercel riesce a comunicare perfettamente con il server SMTP di Register.it!",
+      from: `"Delta Service Gestionale" <${user}>`,
+      to: recipient,
+      subject: "Test connessione SMTP Delta Service - OK",
+      text: `Se stai leggendo questa email, l'applicazione riesce a inviare correttamente da ${user} a ${recipient}!`,
     });
 
     return NextResponse.json({ 
       success: true, 
-      message: "Connessione SMTP verificata ed email inviata con successo!", 
+      message: "Connessione SMTP verificata ed email di test inviata con successo!", 
       messageId: info.messageId,
-      host: process.env.SMTP_HOST,
-      user: process.env.SMTP_USER
+      host,
+      port,
+      secure: port === 465,
+      from: user,
+      sentTo: recipient
     });
   } catch (error: any) {
     return NextResponse.json({ 
       success: false, 
       error: error.message,
-      host: process.env.SMTP_HOST,
-      user: process.env.SMTP_USER
+      code: error.code,
+      response: error.response,
+      host,
+      port,
+      secure: port === 465,
+      user
     }, { status: 500 });
   }
 }
