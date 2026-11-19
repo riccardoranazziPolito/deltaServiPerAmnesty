@@ -37,8 +37,8 @@ export default async function RootLayout({
         }}>
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>
             <img
-              src="/logo.webp"
-              alt="Amnesty International"
+              src="/logo.png"
+              alt="Amnesty International Italia"
               style={{ height: '44px', width: 'auto', borderRadius: '4px', display: 'block' }}
             />
             <span>Delta Service</span>
@@ -90,8 +90,8 @@ export default async function RootLayout({
           gap: '0.75rem'
         }}>
           <img
-            src="/logo.webp"
-            alt="Amnesty International"
+            src="/logo.png"
+            alt="Amnesty International Italia"
             style={{ height: '32px', width: 'auto', borderRadius: '4px' }}
           />
           <span>© {new Date().getFullYear()} Delta Service • Amnesty International. Tutti i diritti riservati.</span>

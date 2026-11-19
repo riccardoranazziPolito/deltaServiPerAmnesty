@@ -13,8 +13,8 @@ export default function Home() {
     }}>
       <div className="glass-panel" style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <img
-          src="/logo.webp"
-          alt="Amnesty International"
+          src="/logo.png"
+          alt="Amnesty International Italia"
           style={{ height: '84px', width: 'auto', borderRadius: '8px', marginBottom: '1.5rem' }}
         />
         <h1 style={{ fontSize: '3rem', marginBottom: '1rem', background: 'linear-gradient(to right, var(--accent-primary), #facc15)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>

@@ -11,8 +11,8 @@ export default function LoginPage() {
       <div className="glass-panel" style={{ width: '100%', maxWidth: '420px' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
           <img
-            src="/logo.webp"
-            alt="Amnesty International"
+            src="/logo.png"
+            alt="Amnesty International Italia"
             style={{ height: '64px', width: 'auto', borderRadius: '6px' }}
           />
         </div>
